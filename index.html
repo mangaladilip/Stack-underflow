@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Stack Simulation</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    color: #232323;
+    text-align: center;
+    background: #f5f5f5;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 30px;
+}
+
+input {
+    padding: 6px;
+    margin: 10px;
+}
+
+.code {
+    text-align: left;
+    background: #fff;
+    padding: 15px;
+    border: 2px solid #232323;
+    width: 300px;
+}
+
+.line {
+    padding: 6px;
+}
+
+.active {
+    background: #724b9e;
+    color: white;
+}
+
+.stack-box {
+    width: 200px;
+    height: 300px;
+    background: #e8d227;
+    border: 3px solid #232323;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+}
+
+.block {
+    width: 120px;
+    height: 40px;
+    border: 2px solid #232323;
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+}
+
+.top {
+    background: #724b9e;
+    color: white;
+}
+
+.top-label {
+    position: absolute;
+    right: -60px;
+    font-weight: bold;
+    color: #724b9e;
+}
+
+button {
+    margin: 15px;
+    padding: 10px 20px;
+    background: #724b9e;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Stack Simulation</h2>
+
+<!-- Input -->
+<div>
+    Value: <input type="text" id="valueInput" placeholder="Enter value">
+</div>
+
+<div class="container">
+
+    <!-- Code -->
+    <div class="code">
+        <div class="line" id="l1">stack.append(value)</div>
+    </div>
+
+    <!-- Stack -->
+    <div>
+        <h3>Stack</h3>
+        <div class="stack-box" id="stackBox"></div>
+        <div class="top-label" id="topLabel">Top</div>
+    </div>
+
+</div>
+
+<button onclick="nextStep()">Next</button>
+<button onclick="resetSim()">Refresh</button>
+
+<script>
+let stack = [];
+
+function clearHighlight() {
+    document.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+}
+
+function renderStack() {
+    const box = document.getElementById('stackBox');
+    box.innerHTML = "";
+
+    stack.forEach((val, index) => {
+        let div = document.createElement('div');
+        div.className = "block";
+        div.innerText = val;
+
+        if (index === stack.length - 1) {
+            div.classList.add("top");
+        }
+
+        box.appendChild(div);
+    });
+
+    const label = document.getElementById("topLabel");
+    if (stack.length === 0) {
+        label.style.display = "none";
+    } else {
+        label.style.display = "block";
+        label.style.top = (300 - (stack.length * 50)) + "px";
+    }
+}
+
+function nextStep() {
+    clearHighlight();
+
+    let value = document.getElementById("valueInput").value;
+
+    if (value === "") {
+        alert("Enter a value first");
+        return;
+    }
+
+    document.getElementById("l1").classList.add("active");
+
+    stack.push(value);
+
+    // Show actual value briefly
+    document.getElementById("l1").innerText = "stack.append(" + value + ")";
+
+    setTimeout(() => {
+        document.getElementById("l1").innerText = "stack.append(value)";
+    }, 800);
+
+    document.getElementById("valueInput").value = "";
+
+    renderStack();
+}
+
+function resetSim() {
+    stack = [];
+    clearHighlight();
+    document.getElementById("valueInput").value = "";
+    document.getElementById("l1").innerText = "stack.append(value)";
+    renderStack();
+}
+</script>
+
+</body>
+</html>
