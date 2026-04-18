@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Stack Pop Simulation</title>
+<title>Stack POP Simulation</title>
 
 <style>
 body {
@@ -102,7 +102,7 @@ button {
 
 <body>
 
-<h2>Stack Pop Simulation</h2>
+<h2>Stack POP Simulation</h2>
 
 <div class="container">
 
@@ -111,7 +111,7 @@ button {
         <div class="line" id="l1">if len(stack) == 0:</div>
         <div class="line" id="l2">    print("Underflow")</div>
         <div class="line" id="l3">else:</div>
-        <div class="line" id="l4">    item = stack.pop()</div>
+        <div class="line" id="l4">    item = stack.POP()</div>
         <div class="line" id="l5">    print(item)</div>
     </div>
 
@@ -134,7 +134,7 @@ button {
 
 </div>
 
-<button onclick="popStep()">Pop</button>
+<button onclick="POPStep()">POP</button>
 <button onclick="resetSim()">Refresh</button>
 
 <script>
@@ -142,7 +142,7 @@ let initialStack = [10, 20, 30, 40, 50];
 let stack = [...initialStack];
 
 let stage = 0;
-let poppedItem = null;
+let POPpedItem = null;
 
 function renderStack() {
     const box = document.getElementById('stackBox');
@@ -168,7 +168,7 @@ function clearHighlight() {
     document.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
 }
 
-function popStep() {
+function POPStep() {
     clearHighlight();
 
     if (stage === 0) {
@@ -192,7 +192,7 @@ function popStep() {
 
     if (stage === 2) {
         document.getElementById("l4").classList.add("active");
-        poppedItem = stack.pop();
+        POPpedItem = stack.POP();
         renderStack();
         stage = 3;
         return;
@@ -200,7 +200,7 @@ function popStep() {
 
     if (stage === 3) {
         document.getElementById("l5").classList.add("active");
-        document.getElementById("outputBox").innerText = poppedItem;
+        document.getElementById("outputBox").innerText = POPpedItem;
         stage = 0;
     }
 }
