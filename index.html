@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Stack Simulation</title>
+<title>Stack Pop Simulation</title>
 
 <style>
 body {
@@ -15,25 +15,22 @@ body {
 .container {
     display: flex;
     justify-content: center;
-    gap: 60px;
-    margin-top: 30px;
+    gap: 40px;
+    margin-top: 20px;
 }
 
-input {
-    padding: 6px;
-    margin: 10px;
-}
-
+/* Code */
 .code {
     text-align: left;
     background: #fff;
-    padding: 15px;
+    padding: 10px;
     border: 2px solid #232323;
-    width: 300px;
+    width: 220px;
+    font-size: 14px;
 }
 
 .line {
-    padding: 6px;
+    padding: 4px;
 }
 
 .active {
@@ -41,23 +38,23 @@ input {
     color: white;
 }
 
+/* Stack */
 .stack-box {
-    width: 200px;
-    height: 300px;
+    width: 180px;
+    height: 260px;
     background: #e8d227;
     border: 3px solid #232323;
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
-    padding: 10px;
-    position: relative;
+    padding: 8px;
 }
 
 .block {
-    width: 120px;
-    height: 40px;
+    width: 110px;
+    height: 35px;
     border: 2px solid #232323;
-    margin: 5px 0;
+    margin: 4px 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,16 +66,32 @@ input {
     color: white;
 }
 
-.top-label {
-    position: absolute;
-    right: -60px;
-    font-weight: bold;
-    color: #724b9e;
+/* Output */
+.output-container {
+    margin-top: 10px;
 }
 
+.output-box {
+    width: 180px;
+    height: 80px;
+    border: 3px solid #232323;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* Length display */
+.length-box {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Buttons */
 button {
-    margin: 15px;
-    padding: 10px 20px;
+    margin: 12px;
+    padding: 8px 16px;
     background: #724b9e;
     color: white;
     border: none;
@@ -89,38 +102,47 @@ button {
 
 <body>
 
-<h2>Stack Simulation</h2>
-
-<!-- Input -->
-<div>
-    Value: <input type="text" id="valueInput" placeholder="Enter value">
-</div>
+<h2>Stack Pop Simulation</h2>
 
 <div class="container">
 
     <!-- Code -->
     <div class="code">
-        <div class="line" id="l1">stack.append(value)</div>
+        <div class="line" id="l1">if len(stack) == 0:</div>
+        <div class="line" id="l2">    print("Underflow")</div>
+        <div class="line" id="l3">else:</div>
+        <div class="line" id="l4">    item = stack.pop()</div>
+        <div class="line" id="l5">    print(item)</div>
     </div>
 
-    <!-- Stack -->
+    <!-- Stack + Output -->
     <div>
         <h3>Stack</h3>
         <div class="stack-box" id="stackBox"></div>
-        <div class="top-label" id="topLabel">Top</div>
+
+        <!-- Length -->
+        <div class="length-box" id="lengthBox">
+            Length: 5
+        </div>
+
+        <!-- Output -->
+        <div class="output-container">
+            <h4>Output</h4>
+            <div class="output-box" id="outputBox">--</div>
+        </div>
     </div>
 
 </div>
 
-<button onclick="nextStep()">Next</button>
+<button onclick="popStep()">Pop</button>
 <button onclick="resetSim()">Refresh</button>
 
 <script>
-let stack = [];
+let initialStack = [10, 20, 30, 40, 50];
+let stack = [...initialStack];
 
-function clearHighlight() {
-    document.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
-}
+let stage = 0;
+let poppedItem = null;
 
 function renderStack() {
     const box = document.getElementById('stackBox');
@@ -138,48 +160,60 @@ function renderStack() {
         box.appendChild(div);
     });
 
-    const label = document.getElementById("topLabel");
-    if (stack.length === 0) {
-        label.style.display = "none";
-    } else {
-        label.style.display = "block";
-        label.style.top = (300 - (stack.length * 50)) + "px";
-    }
+    // Update length
+    document.getElementById("lengthBox").innerText = "Length: " + stack.length;
 }
 
-function nextStep() {
+function clearHighlight() {
+    document.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+}
+
+function popStep() {
     clearHighlight();
 
-    let value = document.getElementById("valueInput").value;
-
-    if (value === "") {
-        alert("Enter a value first");
+    if (stage === 0) {
+        document.getElementById("l1").classList.add("active");
+        stage = 1;
         return;
     }
 
-    document.getElementById("l1").classList.add("active");
+    if (stage === 1 && stack.length === 0) {
+        document.getElementById("l2").classList.add("active");
+        document.getElementById("outputBox").innerText = "Underflow";
+        stage = 0;
+        return;
+    }
 
-    stack.push(value);
+    if (stage === 1) {
+        document.getElementById("l3").classList.add("active");
+        stage = 2;
+        return;
+    }
 
-    // Show actual value briefly
-    document.getElementById("l1").innerText = "stack.append(" + value + ")";
+    if (stage === 2) {
+        document.getElementById("l4").classList.add("active");
+        poppedItem = stack.pop();
+        renderStack();
+        stage = 3;
+        return;
+    }
 
-    setTimeout(() => {
-        document.getElementById("l1").innerText = "stack.append(value)";
-    }, 800);
-
-    document.getElementById("valueInput").value = "";
-
-    renderStack();
+    if (stage === 3) {
+        document.getElementById("l5").classList.add("active");
+        document.getElementById("outputBox").innerText = poppedItem;
+        stage = 0;
+    }
 }
 
 function resetSim() {
-    stack = [];
+    stack = [...initialStack];
+    document.getElementById("outputBox").innerText = "--";
     clearHighlight();
-    document.getElementById("valueInput").value = "";
-    document.getElementById("l1").innerText = "stack.append(value)";
+    stage = 0;
     renderStack();
 }
+
+renderStack();
 </script>
 
 </body>
